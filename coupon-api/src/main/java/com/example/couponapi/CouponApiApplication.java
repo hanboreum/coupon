@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class CouponApiApplication {
 
 	public static void main(String[] args) {
+		System.setProperty("spring.config.name", "application-core, application-api");
 		SpringApplication.run(CouponApiApplication.class, args);
 	}
 
