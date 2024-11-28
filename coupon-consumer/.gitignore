@@ -1,4 +1,4 @@
-application.yml
+application-consumer.yml
 HELP.md
 .gradle
 build/
