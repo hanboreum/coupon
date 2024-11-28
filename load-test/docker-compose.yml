@@ -1,0 +1,15 @@
+version: '3.7'
+services:
+  master:
+    image: locustio/locust #locust image 사용
+    ports:
+      - "8089:8089"
+    volumes:
+      - ./:/mnt/locust
+    command: -f /mnt/locust/locustfile-hello.py --master -H http://host.docker.internal:8080 # 테스트 할 .py 파일 지정. local8080 (= coupon-api) 에서 실행.
+
+  worker:
+    image: locustio/locust
+    volumes:
+      - ./:/mnt/locust
+    command: -f /mnt/locust/locustfile-hello.py --worker --master-host master
