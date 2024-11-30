@@ -16,13 +16,7 @@ public class CouponIssueRequestService {
     private final DistributeLockExecutor distributeLockExecutor;
 
     public void issueRequestV1(CouponIssueRequestDto requestDto) {
-        distributeLockExecutor.execute("lock_" + requestDto.couponId(), 10000, 10000, () -> {
-            /**
-             * executor 에 runnable 을 넘겨 execute 안에서 실행 할 수 있도록.
-             */
-            couponIssueService.issue(requestDto.couponId(), requestDto.userId());
-
-        });
+        couponIssueService.issue(requestDto.couponId(), requestDto.userId());
         log.info("쿠폰 발급 완료. couponId: {}, userId: {}", requestDto.couponId(), requestDto.userId());
     }
 }
