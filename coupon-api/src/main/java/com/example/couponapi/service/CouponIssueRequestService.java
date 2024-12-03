@@ -1,7 +1,6 @@
 package com.example.couponapi.service;
 
 import com.example.couponapi.controller.dto.CouponIssueRequestDto;
-import com.example.couponcore.component.DistributeLockExecutor;
 import com.example.couponcore.service.AsyncCouponIssueServiceV1;
 import com.example.couponcore.service.CouponIssueService;
 import lombok.RequiredArgsConstructor;
