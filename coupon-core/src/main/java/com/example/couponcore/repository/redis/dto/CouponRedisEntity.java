@@ -3,7 +3,6 @@ package com.example.couponcore.repository.redis.dto;
 import static com.example.couponcore.exception.ErrorCode.INVALID_COUPON_ISSUE_DATE;
 
 import com.example.couponcore.exception.CouponIssueException;
-import com.example.couponcore.exception.ErrorCode;
 import com.example.couponcore.model.Coupon;
 import com.example.couponcore.model.CouponType;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
