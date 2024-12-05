@@ -1,23 +1,21 @@
 package com.example.couponcore.service;
 
-import static com.example.couponcore.exception.ErrorCode.DUPLICATED_COUPON_ISSUE;
 import static com.example.couponcore.exception.ErrorCode.FAIL_COUPON_REQUEST;
-import static com.example.couponcore.exception.ErrorCode.INVALID_COUPON_ISSUE_DATE;
-import static com.example.couponcore.exception.ErrorCode.INVALID_COUPON_ISSUE_QUANTITY;
 import static com.example.couponcore.util.CouponRedisUtil.getIssueRequestKey;
 import static com.example.couponcore.util.CouponRedisUtil.getIssueRequestQueueKey;
 
 import com.example.couponcore.component.DistributeLockExecutor;
 import com.example.couponcore.exception.CouponIssueException;
-import com.example.couponcore.model.Coupon;
 import com.example.couponcore.repository.redis.RedisRepository;
 import com.example.couponcore.repository.redis.dto.CouponIssueRequest;
 import com.example.couponcore.repository.redis.dto.CouponRedisEntity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AsyncCouponIssueServiceV1 {
@@ -34,7 +32,6 @@ public class AsyncCouponIssueServiceV1 {
         CouponRedisEntity coupon = couponCacheService.getCouponCache(couponId);
         //캐시로 날짜 유효성 검사
         coupon.checkIssuableCoupon();
-        Integer totalQuantity = coupon.totalQuantity();
         //동시성 제어를 위한 락
         distributeLockExecutor.execute("lock_%s".formatted(couponId), 3000, 3000, () -> {
             //수량 검증
@@ -43,6 +40,7 @@ public class AsyncCouponIssueServiceV1 {
             issueRequest(couponId, userId);
         });
     }
+
 
     //유저 요청 set에 저장, queue 에 적재
     private void issueRequest(long couponId, long userId) {
@@ -59,8 +57,9 @@ public class AsyncCouponIssueServiceV1 {
              * 이후에는 Queue 에 쌓은 데이터를 쿠폰 발급 서버에서 트랜잭션 처리 할 수 있도록 구현
              */
             String value = objectMapper.writeValueAsString(couponIssueRequest);
+            //쿠폰 발급 요청 저장
             redisRepository.sAdd(getIssueRequestKey(couponId), String.valueOf(userId));
-
+            //쿠폰 발급 큐 적재
             redisRepository.rPush(getIssueRequestQueueKey(), value);
         } catch (JsonProcessingException e) {
             throw new CouponIssueException(FAIL_COUPON_REQUEST,

@@ -38,7 +38,6 @@ public class CouponIssueRedisService {
 
     //수량 검증
     public boolean availableTotalIssueQuantity(Integer totalQuantity, long couponId) {
-
         if (totalQuantity == null) {
             return true;
         }
