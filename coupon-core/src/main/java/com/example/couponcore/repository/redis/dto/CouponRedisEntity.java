@@ -1,6 +1,7 @@
 package com.example.couponcore.repository.redis.dto;
 
 import static com.example.couponcore.exception.ErrorCode.INVALID_COUPON_ISSUE_DATE;
+import static com.example.couponcore.exception.ErrorCode.INVALID_COUPON_ISSUE_QUANTITY;
 
 import com.example.couponcore.exception.CouponIssueException;
 import com.example.couponcore.model.Coupon;
@@ -16,6 +17,7 @@ public record CouponRedisEntity(
         Long id,
         CouponType couponType,
         Integer totalQuantity,
+        boolean availableIssueQuantity,
 
         @JsonSerialize(using = LocalDateTimeSerializer.class)
         @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -32,6 +34,7 @@ public record CouponRedisEntity(
                 coupon.getId(),
                 coupon.getCouponType(),
                 coupon.getTotalQuantity(),
+                coupon.availableIssueQuantity(),
                 coupon.getDateIssueStart(),
                 coupon.getDateIssueEnd()
         );
@@ -43,6 +46,12 @@ public record CouponRedisEntity(
     }
 
     public void checkIssuableCoupon() {
+        //수량 검증
+        if (!availableIssueQuantity()) {
+            throw new CouponIssueException(INVALID_COUPON_ISSUE_QUANTITY,
+                    "모든 발급 수량 소진. couponId: %s".formatted(id));
+        }
+
         if (!availableIssueDate()) {
             throw new CouponIssueException(INVALID_COUPON_ISSUE_DATE,
                     " 발급 기간이 유효 하지 않음, couponId: %s, issueStart:%s, issueEnd:%s".formatted(id,

@@ -5,7 +5,6 @@ import static com.example.couponcore.util.CouponRedisUtil.getIssueRequestKey;
 import static com.example.couponcore.util.CouponRedisUtil.getIssueRequestQueueKey;
 
 import com.example.couponcore.exception.CouponIssueException;
-import com.example.couponcore.exception.ErrorCode;
 import com.example.couponcore.repository.redis.dto.CouponIssueRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -54,6 +53,17 @@ public class RedisRepository {
         return redisTemplate.opsForList().rightPush(key, value);
     }
 
+    public String lIndex(String key, long index) {
+        return redisTemplate.opsForList().index(key, index);
+    }
+
+    public String lPop(String key) {
+        return redisTemplate.opsForList().leftPop(key);
+    }
+
+    public Long lSize(String key) {
+        return redisTemplate.opsForList().size(key);
+    }
 
     //script 실행
     public void issueRequest(long couponId, long userId, int totalIssueQuantity) {
@@ -69,23 +79,22 @@ public class RedisRepository {
             );
             CouponIssueRequestCode.checkRequestResult(CouponIssueRequestCode.find(code));
         } catch (JsonProcessingException e) {
-            throw new CouponIssueException(FAIL_COUPON_REQUEST,
-                    "input: %s".formatted(couponIssueRequest));
+            throw new CouponIssueException(FAIL_COUPON_REQUEST, "input: %s".formatted(couponIssueRequest));
         }
     }
 
+    /**
+     * call 을 통해 redis 명령어 SISMEMBER 실행. 결과가 이미 존재 한다면 2 return
+     *
+     *if 발급 수량이 남았으면
+     * redis 명령어 실행
+     * SADD - 요청 저장
+     * RPUSH - 쿠폰 발급 큐에 적재
+     * 1 return
+     *
+     * 그 이외에는 3 return
+     */
     private RedisScript<String> issueRequestScript() {
-        /**
-         * call 을 통해 redis 명령어 SISMEMBER 실행. 결과가 이미 존재 한다면 2 return
-         *
-         *if 발급 수량이 남았으면
-         * redis 명령어 실행
-         * SADD - 요청 저장
-         * RPUSH - 쿠폰 발급 큐에 적재
-         * 1 return
-         *
-         * 그 이외에는 3 return
-         */
         String script = """
                 if redis.call('SISMEMBER', KEYS[1], ARGV[1]) == 1 then
                     return '2'
