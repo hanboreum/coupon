@@ -5,8 +5,8 @@ scrape_configs:
   - job_name: "coupon-api"
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: [ 'host.docker.internal:8080' ]
+      - targets: [ 'host.docker.internal:8080' ] //coupon-api public api 로 변경 ex)35345:8080
   - job_name: "coupon-consumer"
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: [ 'host.docker.internal:8081' ]
+      - targets: [ 'host.docker.internal:8081' ] //coupon-consumer public api 로 변경
