@@ -3,7 +3,6 @@ application-core.yml
 application-api.yml
 application.yml
 prometheus.yml
-docker-compose.yml
 
 HELP.md
 .gradle
@@ -43,4 +42,6 @@ out/
 ### VS Code ###
 .vscode/
 
-application.yml
+application.yml!/monitoring/prometheus/volume/
+/monitoring/prometheus/volume/
+/monitoring/grafana/volume/
