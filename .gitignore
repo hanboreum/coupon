@@ -2,6 +2,8 @@ application-consumer.yml
 application-core.yml
 application-api.yml
 application.yml
+prometheus.yml
+docker-compose.yml
 
 HELP.md
 .gradle
