@@ -3,3 +3,12 @@ spring:
     name: coupon-consumer
 server:
   port:
+management:
+  metrics:
+    tags:
+      application:
+        ${spring.application.name}
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
