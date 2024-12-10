@@ -4,7 +4,7 @@ application-api.yml
 application.yml
 prometheus.yml
 
-HELP.md
+READ.md
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
@@ -45,3 +45,4 @@ out/
 application.yml!/monitoring/prometheus/volume/
 /monitoring/prometheus/volume/
 /monitoring/grafana/volume/
+!/READ.md
