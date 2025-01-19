@@ -48,7 +48,7 @@
   - 쿠폰 발급 기록 저장 
     - 쿠폰 ID
     - 유저 ID
-
+![image.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/cb3d4d57-4f0f-4850-8155-fdb2a0b817c5/b9a09fec-eeef-4d06-a566-edfd85d08541/image.png)
 ## 패키지 구조
 - coupon-api 
   - 쿠폰에 대한 api 서버
